@@ -108,6 +108,17 @@ type Query {
       configuration: "postgresql_config"
     )
 
+  # getVotesByPostId(post_id: ID!): [Votes]
+  #   @dbquery(
+  #     type: "postgresql"
+  #     schema: "public"
+  #     query: """
+  #     select * from "vote" where "post_id"=$1
+  #     order by "created_at" desc
+  #     """
+  #     configuration: "postgresql_config"
+  #   )
+
   getSubredditListById(id: ID!): [Subreddit]
     @dbquery(
       type: "postgresql"
@@ -332,6 +343,16 @@ type Mutation {
       dml: INSERT
       configuration: "postgresql_config"
     )
+
+  insertVotes(post_id: ID!, username: String!, upvote: Boolean!): Vote
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "vote"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+
   deleteVote(id: ID!): Vote
     @dbquery(
       type: "postgresql"
