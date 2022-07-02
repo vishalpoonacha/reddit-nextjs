@@ -46,13 +46,31 @@ function Post({ post }: Props) {
 
     console.log("Voting...", isUpvote);
 
-    await addVote({
+    const {
+      data: { insertVotes: newVote },
+    } = await addVote({
       variables: {
         post_id: post.id,
         username: session.user?.name,
         upvote: isUpvote,
       },
     });
+  };
+
+  console.log("placing votes...", data);
+
+  const displayVotes = (data: any) => {
+    const votes: Vote[] = data?.getVotesByPostId;
+    const displayNumber = votes?.reduce(
+      (total, vote) => (vote.upvote ? (total += 1) : (total -= 1)),
+      0
+    );
+    if (votes?.length === 0) return 0;
+    if (displayNumber === 0) {
+      return votes[0]?.upvote ? 1 : -1;
+    }
+
+    return displayNumber;
   };
 
   useEffect(() => {
@@ -82,7 +100,7 @@ function Post({ post }: Props) {
               vote && "text-red-400"
             }`}
           />
-          <p className="text-black text-xs font-bold">0</p>
+          <p className="text-black text-xs font-bold">{data}</p>
           <ArrowDownIcon
             onClick={() => upVote(false)}
             className={`voteButtons hover:text-blue-400${
